@@ -1,6 +1,6 @@
 {
   "name": "robopaint-mode-manual",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "robopaint_mode",
   "main": "manual.js",
   "author": "techninja",
@@ -19,6 +19,12 @@
       "jquery",
       "underscore",
       "mediasets"
-    ]
+    ],
+    "graphics": {
+      "icon": "images/manual_icon.svg",
+      "previews": [
+        "images/manual_preview_1.jpg"
+      ]
+    }
   }
 }
