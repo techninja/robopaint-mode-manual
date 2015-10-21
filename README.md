@@ -1,5 +1,7 @@
 # RoboPaint: Manual Mode
-An experimental automatic mode for advanced customization
+An experimental automatic mode for advanced customization of automated prints.
+
+![Manual Mode Example](images/manual_preview_1.jpg?raw=true)
 
 This module is a mode for [RoboPaint](https://github.com/evil-mad/robopaint),
 the software for drawing robots, and your
