@@ -5,10 +5,9 @@
     "release": "0.9.5"
   },
   "info":{
-    "description": "Manual Mode: Customize your print",
-    "title": "Manual Paint",
-    "detail": "Like Auto-paint, but allows for more control over what elements are painted, and a number of other options.",
-    "word": "Manual"
+    "name": "Manual Paint",
+    "use": "Custom Image Print",
+    "detail": "Like Automatic print mode, but allows for more control over what elements are painted and how, with a number of other options."
   },
   "labels": {
     "machine": "Machine",
