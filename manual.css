@@ -313,7 +313,7 @@ fieldset#control {
   -webkit-animation-iteration-count: infinite;
 }
 
-#control fieldset {
+#control > fieldset {
   padding: 0 7px 7px;
   border: 0;
   border-top: 1px solid #C9A165;

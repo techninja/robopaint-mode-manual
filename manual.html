@@ -11,34 +11,35 @@
    <fieldset>
     <legend data-i18n>modes.manual.labels.machine</legend>
     <nav>
-      <button id="pause" data-i18n="[title]modes.manual.commands.specialpause;common.action.pause"></button>
-      <button id="cancel" data-i18n="[title]common.action.canceltitle;common.action.cancel"></button>
-      <button class="normal" id="park" data-i18n="[title]common.action.parktitle;common.action.park"></button>
-      <button class="normal" id="disable" data-i18n="[title]common.action.disabletitle;common.action.disable"></button>
+      <button id="pause" class="ready" disabled data-i18n="[title]modes.manual.commands.start;common.action.start"></button>
+      <button id="cancel" disabled data-i18n="[title]common.action.canceltitle;common.action.cancel"></button>
+      <button class="normal idleonly" id="reset" data-i18n="[title]modes.manual.commands.resettitle;modes.manual.commands.reset"></button>
+      <button class="normal idleonly" id="park" data-i18n="[title]common.action.parktitle;common.action.park"></button>
+      <button class="normal idleonly" id="disable" data-i18n="[title]common.action.disabletitle;common.action.disable"></button>
     </nav>
   </fieldset>
 
   <ul class="tabs">
     <li><a href="#manual-manual" data-i18n>modes.manual.labels.manual</a></li>
-    <li><a href="#manual-auto" data-i18n>modes.manual.labels.auto</a></li>
-    <li><a href="#manual-record" data-i18n>modes.manual.labels.record</a></li>
+    <!--<li><a href="#manual-auto" data-i18n>modes.manual.labels.auto</a></li>-->
+    <!--<li><a href="#manual-record" data-i18n>modes.manual.labels.record</a></li>-->
     <li style="display: none;"><a href="#manual-debug" data-i18n>modes.manual.labels.debug</a></li>
   </ul>
 
   <div id="tab-content">
-    <fieldset id="manual-auto">
+    <!--<fieldset id="manual-auto">
       <nav>
         <button class="normal" id="auto-paint" data-i18n="[title]modes.manual.commands.auto.painttitle;modes.manual.commands.auto.paint"></button>
         <button class="normal" id="auto-color" data-i18n="[title]common.action.autocolortitle;common.action.autocolor"></button>
       </nav>
-    </fieldset>
+    </fieldset>-->
 
     <fieldset id="manual-manual">
       <nav>
-        <button class="normal" id="draw" data-i18n="[title]modes.manual.commands.stroketitle;modes.manual.commands.stroke"></button>
-        <button class="normal" id="fill" data-i18n="[title]modes.manual.commands.filltitle;modes.manual.commands.fill"></button>
+        <button class="normal" disabled id="draw" data-i18n="[title]modes.manual.commands.stroketitle;modes.manual.commands.stroke"></button>
+        <button class="normal" disabled id="fill" data-i18n="[title]modes.manual.commands.filltitle;modes.manual.commands.fill"></button>
 
-        <div class="check-control">
+        <!--<div class="check-control">
           <input type="checkbox" checked id="parkafter"/>
           <label for="parkafter" data-i18n>modes.manual.labels.park</label>
         </div>
@@ -46,21 +47,21 @@
         <div class="check-control">
           <input type="checkbox" checked id="checkvisibility"/>
           <label for="checkvisibility" data-i18n="[title]modes.manual.commands.checktitle;modes.manual.commands.check"></label>
-        </div>
+        </div>-->
 
         <br/>
-        <button class="normal" id="pen" data-i18n>common.action.brush.lower</button>
-        <button class="normal" id="calibrate" data-i18n="[title]modes.manual.commands.calibratetitle;modes.manual.commands.calibrate"></button>
+        <button class="normal idleonly" id="pen" data-i18n>common.action.brush.lower</button>
+        <button class="normal idleonly" id="calibrate" data-i18n="[title]modes.manual.commands.calibratetitle;modes.manual.commands.calibrate"></button>
       </nav>
     </fieldset>
 
-    <fieldset id="manual-record" class="recording">
+    <!--<fieldset id="manual-record" class="recording">
       <nav>
         <button class="normal" id="record-toggle" data-i18n="[title]modes.manual.commands.buffer.recordtitle;modes.manual.commands.buffer.record"></button>
         <button class="normal" id="record-play" disabled data-i18n="[title]modes.manual.commands.buffer.playtitle;modes.manual.commands.buffer.play"></button>
         <button class="normal" id="record-clear" disabled data-i18n="[title]modes.manual.commands.buffer.cleartitle;modes.manual.commands.buffer.clear"></button>
       </nav>
-    </fieldset>
+    </fieldset>-->
   </div>
 </fieldset>
 

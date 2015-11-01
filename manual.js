@@ -6,6 +6,8 @@
 var actualPen = {}; // Hold onto the latest actualPen object from updates.
 var buffer = {};
 var canvas = rpRequire('canvas');
+var cTool = null;
+var t = i18n.t;
 
 mode.pageInitReady = function () {
   // Initialize the paper.js canvas with wrapper margin and other settings.
@@ -32,13 +34,26 @@ mode.pageInitReady = function () {
   $(window).on('resize', responsiveResize).resize();
 }
 
-
+// Called whenever the action layer might change, will enable/disable the start
+// button.
+function checkActionLayer() {
+  $('#pause').prop('disabled', !paper.canvas.actionLayer.children.length);
+}
 
 // Catch CNCServer buffered callbacks
 mode.onCallbackEvent = function(name) {
   switch (name) {
+    case 'autoPaintBegin': // Should happen when we've just started
+      $('#pause').prop('disabled', false); // Enable pause button
+      break;
     case 'autoPaintComplete': // Should happen when we're completely done
-      $('#auto-paint, #fill, #draw').prop('disabled', false);
+      $('#pause').attr('class', 'ready')
+        .attr('title', t('modes.manual.commands.start'))
+        .text(robopaint.t('common.action.start'))
+        .prop('disabled', false);
+      pathSelected();
+      checkActionLayer();
+      $('.idleonly').prop('disabled', false);
       $('#cancel').prop('disabled', true); // Disable the cancel print button
       break;
   }
@@ -48,6 +63,9 @@ mode.onCallbackEvent = function(name) {
 function paperLoadedInit() {
   if (!robopaint.svg.isEmpty()) {
     paper.canvas.loadSVG(robopaint.svg.load());
+
+    // No groups! Easier to select things.
+    paper.utils.ungroupAllGroups(paper.canvas.mainLayer);
   }
 
   // With Paper ready, send a single up to fill values for buffer & pen.
@@ -82,49 +100,85 @@ function buildColorSet() {
 }
 
 
+// Triggered when the canvas is clicked, check for paper.selectedPath changes.
+function pathSelected() {
+  if (paper.selectedPath) {
+    $('#draw, #fill').prop('disabled', false);
+  } else {
+    $('#draw, #fill').prop('disabled', true);
+  }
+}
+
+
 // Mode API called callback for binding the controls
 mode.bindControls = function() {
-  // Ensure buttons are disabled as we have no selection
-  $('#draw').prop('disabled', true);
-  $('#fill').prop('disabled', true);
-
   // Cancel Print
   $('#cancel').click(function(){
     var cancelPrint = confirm(mode.t("status.confirm"));
     if (cancelPrint) {
-      paper.resetAll(); // Cleanup paper portions
       mode.onCallbackEvent('autoPaintComplete');
       mode.fullCancel(mode.t('status.cancelled'));
     }
   });
 
-  // Bind pause click and functionality
-  $('#pause').click(function(){
-    // Are we paused already?
-    if (!buffer.paused) { // Not paused
+  // Bind start/pause click and functionality
+  $('#pause').click(function() {
 
-      // Starting Pause =========
-      $('#pause').prop('disabled', true).attr('title', mode.t("status.wait"));
-      mode.run([
-        ['status', mode.t("status.pausing")],
-        ['pause']
-      ], true); // Insert at the start of the buffer so it happens immediately
+    // With nothing in the queue, start painting the preview (will be disabled
+    // until there is something to paint)
+    if (buffer.length === 0) {
+      $('#pause')
+        .removeClass('ready')
+        .attr('title', t("modes.print.status.pause"))
+        .text(t('common.action.pause'))
+        .prop('disabled', true);
+      $('#auto-paint, #fill, #draw').prop('disabled', true); // Disable options
+      $('.idleonly').prop('disabled', true);
+      $('#cancel').prop('disabled', false); // Enable the cancel print button
 
-      mode.onFullyPaused = function(){
-        mode.run('status', mode.t("status.paused"));
-        $('#pause')
-          .addClass('active')
-          .attr('title',  mode.t('status.resume'))
-          .prop('disabled', false)
-          .text(i18n.t("common.action.resume"));
-      };
-    } else { // We are paused... resume
-      // Resuming ===============
-      mode.run([
-        ['status', mode.t("status.resuming")],
-        ['resume']
-      ], true); // Insert at the start of the buffer so it happens immediately
+      paper.utils.autoPaint(paper.canvas.actionLayer);
+    } else {
+      // With something in the queue... we're either pausing, or resuming
+      if (!buffer.paused) {
+        // Starting Pause =========
+        $('#pause').prop('disabled', true).attr('title', t("status.wait"));
+        mode.run([
+          ['status', t("status.pausing")],
+          ['pause']
+        ], true); // Insert at the start of the buffer so it happens immediately
+
+        mode.onFullyPaused = function(){
+          mode.run('status', t("status.paused"));
+          $('.idleonly').prop('disabled', false);
+          $('#pause')
+            .addClass('active')
+            .attr('title', t("status.resume"))
+            .prop('disabled', false)
+            .text(t("common.action.resume"));
+        };
+      } else {
+        // Resuming ===============
+        $('#buttons button.normal').prop('disabled', true); // Disable options
+        mode.run([
+          ['status', t("status.resuming")],
+          ['resume']
+        ], true); // Insert at the start of the buffer so it happens immediately
+
+        mode.onFullyResumed = function(){
+          $('#pause')
+            .removeClass('active')
+            .attr('title', t("mode.print.status.pause"))
+            .text(t('common.action.pause'));
+          $('.idleonly').prop('disabled', true);
+          mode.run('status', t("status.resumed"));
+        };
+      }
     }
+  });
+
+  $('#reset').click(function(){
+    paper.resetAll();
+    checkActionLayer();
   });
 
   // Setup settings group tabs
@@ -172,23 +226,20 @@ mode.bindControls = function() {
 
   // Bind stroke selected object button
   $('#draw').click(function(){
-    $('#draw').prop('disabled', true);
-    //mode.run('status', i18n.t('status.stroke'));
+    $('#draw, #fill').prop('disabled', true);
+    paper.renderPath(paper.selectedPath, cTool, 'stroke', function(){
+      checkActionLayer();
+      $('#draw, #fill').prop('disabled', false);
+    });
+  });
 
-    // TODO: Rewrite this
-    /*
-    cncserver.paths.runOutline($path, function(){
-      cncserver.cmd.sendComplete(function(){
-        if ($('#parkafter').is(':checked')) cncserver.cmd.run('park');
-        $('#draw').prop('disabled', false);
-        $path.addClass('ants');
-        cncserver.cmd.run('status', mode.t('status.complete'));
-
-        if (cncserver.config.canvasDebug) {
-          $('canvas#debug').show();
-        }
-      });
-    });*/
+  // Bind to fill controls
+  $('#fill').click(function(){
+    $('#draw, #fill').prop('disabled', true);
+    paper.renderPath(paper.selectedPath, cTool, 'fill', function(){
+      checkActionLayer();
+      $('#draw, #fill').prop('disabled', false);
+    });
   });
 
   // Bind various buttons
@@ -233,29 +284,6 @@ mode.bindControls = function() {
       // When done, lets autoPaint em!
       paper.utils.autoPaint(paper.canvas.actionLayer);
     });
-  });
-
-  $('#auto-color').click(function(){
-    // Momentarily hide selection
-    if ($path.length) $path.toggleClass('selected');
-
-    $(this).toggleClass('undo');
-
-    // Bring back selection
-    if ($path.length) $path.toggleClass('selected');
-  });
-
-  // Bind to fill controls
-  $('#fill').click(function(){
-    $('#fill').prop('disabled', true);
-    // TODO: Rewrite this
-    /*
-    cncserver.cmd.run('status', mode.t('status.fill'));
-    cncserver.paths.runFill($path, function(){
-      $('#fill').prop('disabled', false);
-      if ($('#parkafter').is(':checked')) cncserver.cmd.run('park');
-      cncserver.cmd.run('status', mode.t('status.complete'));
-    });*/
   });
 
   // Bind to Recording Buttons
@@ -305,11 +333,13 @@ mode.bindControls = function() {
     var toolExt = isDip ? 'dip' : '';
 
     if ($p.is('.color, .water')) {
+      cTool = $p.attr('id') + toolExt;
       mode.run('media', $p.attr('id') + toolExt);
     }
 
     // X clicked: Do a full brush wash
     if ($p.is('#colorx')) {
+      cTool = null;
       mode.run([
         'wash',
         'park'

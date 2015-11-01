@@ -22,9 +22,6 @@
     "tools": "Tools",
     "disabled": "Disabled for this drawing mode."
   },
-  "dialog": {
-    "confirmexit": "Are you sure you want to go?\n\nExiting this mode while printing will cancel all your jobs. Click OK to leave."
-  },
   "tools": {
     "water1": "Water 1",
     "water2": "Water 2",
@@ -32,14 +29,18 @@
   },
   "status": {
     "stroke": "Painting along selected path...",
+    "confirm": "Are you sure you want to cancel the current job? The preview canvas will be kept",
     "fill": "Filling selected path...",
     "complete": "Painting complete",
-    "zero": "Absolute position reset"
+    "zero": "Absolute position reset",
+    "cancelled": "Custom print cancelled."
   },
   "commands": {
     "full": "Full dip and wiggle",
     "dip": "Single momentary dip",
-    "specialpause": "Click to pause buffer running to bot.",
+    "start": "Paint current preview",
+    "reset": "Reset Canvas",
+    "resettitle": "Delete preview lines and reset canvas.",
     "debug": {
       "buffer": "Buffer Preview",
       "buffertitle": "View the buffer simulation"
