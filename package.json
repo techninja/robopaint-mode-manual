@@ -1,7 +1,7 @@
 {
   "name": "robopaint-mode-manual",
   "version": "0.2.2",
-  "type": "robopaint_mode",
+  "robopaint-type": "mode",
   "main": "manual.js",
   "author": "techninja",
   "license": "MIT",
