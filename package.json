@@ -1,12 +1,11 @@
 {
   "name": "robopaint-mode-manual",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "robopaint-type": "mode",
   "main": "manual.js",
   "author": "techninja",
   "license": "MIT",
   "robopaint": {
-    "core": false,
     "debug": true,
     "i18n": "native",
     "icon": "icon-picture-1",
@@ -26,5 +25,9 @@
         "images/manual_preview_1.jpg"
       ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/techninja/robopaint-mode-manual.git"
   }
 }
